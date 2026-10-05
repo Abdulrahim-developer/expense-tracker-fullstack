@@ -21,7 +21,7 @@ services:
   # ==========================================================
   backend:
     build:
-      context: ./expense
+      context: ./backend
       dockerfile: Dockerfile
     container_name: java-backend-container
     ports:
@@ -40,7 +40,7 @@ services:
   # ==========================================================
   frontend:
     build:
-      context: ./Task-4/task-4
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: react-frontend-container
     ports:
