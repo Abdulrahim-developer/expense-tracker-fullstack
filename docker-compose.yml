@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ==========================================================
+  # 1. THE RELATIONAL DATABASE ENGINE SERVICE
+  # ==========================================================
+  postgres-db:
+    image: postgres:alpine
+    container_name: local-postgres-container
+    environment:
+      POSTGRES_DB: Temp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    networks:
+      - tracker-network
+
+  # ==========================================================
+  # 2. THE SPRING BOOT JAVA BACKEND INSTANCE SERVICE
+  # ==========================================================
+  backend:
+    build:
+      context: ./expense
+      dockerfile: Dockerfile
+    container_name: java-backend-container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/Temp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      - postgres-db
+    networks:
+      - tracker-network
+
+  # ==========================================================
+  # 3. THE NGINX FRONTEND USER INTERFACE SERVICE
+  # ==========================================================
+  frontend:
+    build:
+      context: ./Task-4/task-4
+      dockerfile: Dockerfile
+    container_name: react-frontend-container
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - tracker-network
+
+# ==========================================================
+# CENTRALIZED ISOLATED VIRTUAL BRIDGE NETWORKING TANK
+# ==========================================================
+networks:
+  tracker-network:
+    driver: bridge
